@@ -55,11 +55,9 @@ fn part2(grid_size: usize, input: &str) -> Option<usize> {
         }
     }
 
-    for vec in lookup.values() {
-        if vec.len() > 1 {
-            for id in vec {
-                ids.remove(id);
-            }
+    for vec in lookup.values().filter(|vec| vec.len() > 1) {
+        for id in vec {
+            ids.remove(id);
         }
     }
     if ids.len() != 1 {
