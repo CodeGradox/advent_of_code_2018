@@ -1,6 +1,6 @@
 extern crate regex;
 
-use regex::{ Regex, Captures };
+use regex::Regex;
 use std::collections::{ HashMap, HashSet };
 use std::fs;
 
