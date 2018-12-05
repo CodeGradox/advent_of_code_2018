@@ -3,7 +3,7 @@ use std::fs;
 fn main() {
     let input = input_file();
     println!("{}", part1(input.bytes()));
-    println!("{}", part2(&input));
+    println!("{:?}", part2(&input));
 }
 
 fn part1(input: impl Iterator<Item = u8>) -> usize {
@@ -22,11 +22,10 @@ fn part1(input: impl Iterator<Item = u8>) -> usize {
     ret.len()
 }
 
-fn part2(input: &str) -> usize {
+fn part2(input: &str) -> Option<usize> {
     (b'a'..b'z')
         .map(|low| part1(input.as_bytes().iter().cloned().filter(|b| *b | 32 != low)))
         .min()
-        .unwrap()
 }
 
 fn input_file() -> String {
@@ -66,6 +65,6 @@ mod test {
     #[test]
     fn test_part2() {
         let input = "dabAcCaCBAcCcaDA";
-        assert_eq!(part2(&input), 4);
+        assert_eq!(part2(&input), Some(4));
     }
 }
