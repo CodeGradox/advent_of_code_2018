@@ -7,41 +7,32 @@ fn main() {
 }
 
 fn part1(input: impl Iterator<Item = u8>) -> usize {
-    let mut chars = input.collect::<Vec<u8>>();
+    let mut ret = vec![];
 
-    let mut i = 0;
-    while !chars.is_empty() && i < chars.len() - 1 {
-        if chars[i] != chars[i + 1] && chars[i] | 32 == chars[i + 1] | 32 {
-            chars.remove(i);
-            chars.remove(i);
-            if i > 0 {
-                i -= 1;
+    for b in input {
+        if let Some(&a) = ret.last() {
+            if a != b && a | 32 == b | 32 {
+                ret.pop();
+                continue;
             }
-            continue;
         }
-        i += 1;
+        ret.push(b);
     }
 
-    chars.iter().count()
+    ret.len()
 }
 
 fn part2(input: &str) -> usize {
-    let mut shortest = input.len();
-
-    for i in b'a'..=b'z' {
-        let chars = input.as_bytes().iter().cloned().filter(|b| (*b | 32) != i);
-        let length = part1(chars);
-        if length < shortest {
-            shortest = length;
-        }
-    }
-    shortest
+    (b'a'..b'z')
+        .map(|low| part1(input.as_bytes().iter().cloned().filter(|b| *b | 32 != low)))
+        .min()
+        .unwrap()
 }
 
 fn input_file() -> String {
-    fs::read_to_string("input.txt").expect("Failed to read input.txt")
+    // fs::read_to_string("input.txt").expect("Failed to read input.txt")
     // fs::read_to_string("biginput.txt").expect("Failed to read input.txt")
-    // fs::read_to_string("biginput2.txt").expect("Failed to read input.txt")
+    fs::read_to_string("biginput2.txt").expect("Failed to read input.txt")
 }
 
 #[cfg(test)]
