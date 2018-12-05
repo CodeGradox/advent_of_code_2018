@@ -2,16 +2,16 @@ use std::fs;
 
 fn main() {
     let input = input_file();
-    println!("{}", part1(&input));
+    println!("{}", part1(input.bytes()));
     println!("{}", part2(&input));
 }
 
-fn part1(input: &str) -> usize {
-    let mut chars: Vec<char> = input.chars().collect();
+fn part1(input: impl Iterator<Item = u8>) -> usize {
+    let mut chars = input.collect::<Vec<u8>>();
 
     let mut i = 0;
     while !chars.is_empty() && i < chars.len() - 1 {
-        if chars[i] != chars[i + 1] && chars[i].to_ascii_lowercase() == chars[i + 1].to_ascii_lowercase() {
+        if chars[i] != chars[i + 1] && chars[i] | 32 == chars[i + 1] | 32 {
             chars.remove(i);
             chars.remove(i);
             if i > 0 {
@@ -28,10 +28,9 @@ fn part1(input: &str) -> usize {
 fn part2(input: &str) -> usize {
     let mut shortest = input.len();
 
-    for i in 97u8..=122 {
-        let polymer = i as char;
-        let chars: String = input.chars().filter(|ch| ch.to_ascii_lowercase() != polymer).collect();
-        let length = part1(&chars);
+    for i in b'a'..=b'z' {
+        let chars = input.as_bytes().iter().cloned().filter(|b| (*b | 32) != i);
+        let length = part1(chars);
         if length < shortest {
             shortest = length;
         }
@@ -40,7 +39,9 @@ fn part2(input: &str) -> usize {
 }
 
 fn input_file() -> String {
-  fs::read_to_string("input.txt").expect("Failed to read input.txt")
+    fs::read_to_string("input.txt").expect("Failed to read input.txt")
+    // fs::read_to_string("biginput.txt").expect("Failed to read input.txt")
+    // fs::read_to_string("biginput2.txt").expect("Failed to read input.txt")
 }
 
 #[cfg(test)]
@@ -49,26 +50,26 @@ mod test {
 
     #[test]
     fn test_part1() {
-        let input = "dabAcCaCBAcCcaDA";
-        assert_eq!(part1(&input), 10);
+        let input = "dabAcCaCBAcCcaDA".bytes();
+        assert_eq!(part1(input), 10);
     }
 
     #[test]
     fn test_part1_2() {
-        let input = "aaAA";
-        assert_eq!(part1(&input), 0);
+        let input = "aaAA".bytes();
+        assert_eq!(part1(input), 0);
     }
 
     #[test]
     fn test_part1_empty() {
-        let input = "";
-        assert_eq!(part1(&input), 0);
+        let input = "".bytes();
+        assert_eq!(part1(input), 0);
     }
 
     #[test]
     fn test_part1_no_change() {
-        let input = "aaBAA";
-        assert_eq!(part1(&input), 5);
+        let input = "aaBAA".bytes();
+        assert_eq!(part1(input), 5);
     }
 
     #[test]
